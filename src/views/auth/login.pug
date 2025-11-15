@@ -1,0 +1,25 @@
+extends ../layouts/main
+
+block content
+  section(class="bg-white shadow-lg rounded-xl p-8")
+    h1(class="text-2xl font-bold text-center mb-6 text-slate-800") Iniciar Sessão
+
+    form(action="/auth/login" method="POST" class="flex flex-col gap-4")
+      div(class="flex flex-col gap-1")
+        label(for="email" class="text-sm font-medium text-slate-700") Email
+        input#email(type="email" name="email" required
+          class="border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500")
+
+      div(class="flex flex-col gap-1")
+        label(for="password" class="text-sm font-medium text-slate-700") Password
+        input#password(type="password" name="password" required
+          class="border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500")
+
+      button(type="submit"
+        class="w-full mt-2 bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors")
+        | Entrar
+
+    p(class="text-center text-sm text-slate-600 mt-4")
+      | Não tens conta?
+      a(href="/auth/register" class="text-blue-600 font-medium hover:underline ml-1")
+        | Regista-te aqui

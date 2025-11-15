@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "A web platform to create, manage and participate in community-driven events in real time.",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "build:css": "tailwindcss -i ./src/public/css/tailwind.css -o ./src/public/css/style.css --watch"
   },
   "repository": {
     "type": "git",
@@ -22,9 +24,13 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "mongoose": "^8.19.3"
+    "mongoose": "^8.19.3",
+    "pug": "^3.0.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "autoprefixer": "^10.4.22",
+    "nodemon": "^3.1.10",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18"
   }
 }

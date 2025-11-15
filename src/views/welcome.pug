@@ -1,0 +1,89 @@
+extends layouts/landing
+
+block content
+  section(class="max-w-6xl mx-auto px-4 py-10 md:py-16")
+    // HERO PRINCIPAL
+    div(class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center")
+      // Coluna esquerda: texto
+      div
+        p(class="text-xs font-semibold tracking-widest text-blue-600 uppercase mb-3")
+          | Plataforma de eventos comunitários
+
+        h1(class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-4")
+          | Cria e participa em 
+          span(class="text-blue-600")  eventos
+          |  na tua comunidade.
+
+        p(class="text-slate-600 mb-6 max-w-md")
+          | Organiza meetups, workshops, torneios, atividades de bairro e muito mais. 
+          | Gere inscrições, acompanha presenças e recompensa a participação com pontos.
+
+        div(class="flex flex-col sm:flex-row gap-3")
+          a(href="/auth/register"
+            class="inline-flex justify-center items-center px-5 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition")
+            | Começar agora
+          a(href="/auth/login"
+            class="inline-flex justify-center items-center px-5 py-3 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition")
+            | Já tenho conta
+
+        // Pequenas vantagens
+        div(class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-600")
+          div
+            span(class="block font-semibold text-slate-800 mb-1") Organiza facilmente
+            span Cria eventos públicos ou privados em poucos passos.
+          div
+            span(class="block font-semibold text-slate-800 mb-1") Gestão de inscrições
+            span Acompanha quem se registou e confirma presenças.
+          div
+            span(class="block font-semibold text-slate-800 mb-1") Gamificação
+            span Atribui pontos a participantes e organizadores.
+
+      // Coluna direita: “preview” de eventos
+      div(class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100")
+        h2(class="text-sm font-semibold text-slate-800 mb-3 flex items-center justify-between")
+          span Próximos eventos
+          span(class="text-[11px] text-blue-600") Exemplo de como será
+
+        // Card 1
+        div(class="flex items-start gap-3 py-3 border-b border-slate-100")
+          div(class="mt-1 h-9 w-9 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700")
+            span 24
+          div
+            p(class="text-sm font-semibold text-slate-800") Meetup de Devs JS
+            p(class="text-[11px] text-slate-500") 24 Mar · 18:00 · Espaço Cowork X
+            p(class="text-[11px] text-slate-500 mt-1") 32 participantes confirmados
+
+        // Card 2
+        div(class="flex items-start gap-3 py-3 border-b border-slate-100")
+          div(class="mt-1 h-9 w-9 rounded-lg bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700")
+            span 02
+          div
+            p(class="text-sm font-semibold text-slate-800") Workshop: Introdução a React
+            p(class="text-[11px] text-slate-500") 2 Abr · 14:30 · Biblioteca Municipal
+            p(class="text-[11px] text-slate-500 mt-1") 18 de 25 vagas ocupadas
+
+        // Card 3
+        div(class="flex items-start gap-3 py-3")
+          div(class="mt-1 h-9 w-9 rounded-lg bg-purple-100 flex items-center justify-center text-xs font-bold text-purple-700")
+            span 10
+          div
+            p(class="text-sm font-semibold text-slate-800") Torneio FIFA Solidário
+            p(class="text-[11px] text-slate-500") 10 Abr · 15:00 · Associação Juvenil Y
+            p(class="text-[11px] text-slate-500 mt-1") Angariação de fundos para projetos locais
+
+    // Secção extra (opcional)
+    section(class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm")
+      div(class="bg-white rounded-xl shadow-sm p-5")
+        h3(class="font-semibold text-slate-800 mb-1") Para organizadores
+        p(class="text-slate-600 text-xs")
+          | Centraliza toda a gestão dos teus eventos: inscrições, presenças e comunicação com os participantes.
+
+      div(class="bg-white rounded-xl shadow-sm p-5")
+        h3(class="font-semibold text-slate-800 mb-1") Para participantes
+        p(class="text-slate-600 text-xs")
+          | Descobre eventos interessantes perto de ti e acompanha o histórico das tuas participações.
+
+      div(class="bg-white rounded-xl shadow-sm p-5")
+        h3(class="font-semibold text-slate-800 mb-1") Para comunidades
+        p(class="text-slate-600 text-xs")
+          | Incentiva a participação cívica, o voluntariado e a criação de redes locais ativas.
