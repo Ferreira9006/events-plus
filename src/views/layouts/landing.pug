@@ -7,7 +7,6 @@ html(lang="pt")
     link(rel="stylesheet", href="/css/style.css")
   body(class="bg-slate-100 min-h-screen flex flex-col")
 
-    // NAVBAR
     header(class="bg-white/80 backdrop-blur shadow-sm")
       nav(class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between")
         a(href="/" class="flex items-center gap-2")
@@ -21,11 +20,9 @@ html(lang="pt")
             class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition")
             | Criar conta
 
-    // CONTEÚDO
     main(class="flex-1")
       block content
 
-    // FOOTER
     footer(class="border-t border-slate-200 mt-10")
       div(class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-400 flex justify-between")
         span © #{new Date().getFullYear()} Events+
