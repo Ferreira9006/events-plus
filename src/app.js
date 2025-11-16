@@ -5,6 +5,7 @@ import path from "path";
 import session from "express-session";
 import { fileURLToPath } from "url";
 
+import { requireAuth } from './middleware/auth.js';
 import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
@@ -34,10 +35,13 @@ app.use(session({
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-
 // Routes
 app.get("/", (req, res) => {
   res.render("welcome", { title: "Welcome" });
+});
+
+app.get("/dashboard", requireAuth, (req, res) => {
+  res.render("dashboard", { title: "Dashboard", user: req.session.user });
 });
 
 app.use("/auth", authRoutes);

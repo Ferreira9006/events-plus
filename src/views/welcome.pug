@@ -2,9 +2,9 @@ extends layouts/landing
 
 block content
   section(class="max-w-6xl mx-auto px-4 py-10 md:py-16")
-    // HERO PRINCIPAL
+    // HERO SECTION
     div(class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center")
-      // Coluna esquerda: texto
+      // Left column: Text content
       div
         p(class="text-xs font-semibold tracking-widest text-blue-600 uppercase mb-3")
           | Plataforma de eventos comunitários
@@ -26,19 +26,7 @@ block content
             class="inline-flex justify-center items-center px-5 py-3 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition")
             | Já tenho conta
 
-        // Pequenas vantagens
-        div(class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-600")
-          div
-            span(class="block font-semibold text-slate-800 mb-1") Organiza facilmente
-            span Cria eventos públicos ou privados em poucos passos.
-          div
-            span(class="block font-semibold text-slate-800 mb-1") Gestão de inscrições
-            span Acompanha quem se registou e confirma presenças.
-          div
-            span(class="block font-semibold text-slate-800 mb-1") Gamificação
-            span Atribui pontos a participantes e organizadores.
-
-      // Coluna direita: “preview” de eventos
+      // Right column: Events “preview”
       div(class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100")
         h2(class="text-sm font-semibold text-slate-800 mb-3 flex items-center justify-between")
           span Próximos eventos
@@ -71,7 +59,7 @@ block content
             p(class="text-[11px] text-slate-500") 10 Abr · 15:00 · Associação Juvenil Y
             p(class="text-[11px] text-slate-500 mt-1") Angariação de fundos para projetos locais
 
-    // Secção extra (opcional)
+    // Extra section
     section(class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm")
       div(class="bg-white rounded-xl shadow-sm p-5")
         h3(class="font-semibold text-slate-800 mb-1") Para organizadores

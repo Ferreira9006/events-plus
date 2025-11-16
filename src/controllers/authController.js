@@ -26,10 +26,17 @@ async function login(req, res) {
     // Finds the user by email
     const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.render("auth/login", {
+        error: "Invalid email or password",
+        old: { email }
+      });
+    }
+
     // Compares the provided password with the stored hash password
     const isMatch = await bcrypt.compare(password, user.passwordHash);
 
-    if (!user || !isMatch) {
+    if (!isMatch) {
       return res.render("auth/login", {
         error: "Invalid email or password",
         old: { email }
@@ -43,6 +50,7 @@ async function login(req, res) {
       email: user.email,
       role: user.role
     }
+    
     return res.redirect("/dashboard");
 
   } catch (error) {
@@ -105,9 +113,16 @@ async function register(req, res) {
   }
 }
 
+function logout(req, res) {
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
+}
+
 export default {
   showLogin,
   showRegister,
   login,
-  register
+  register,
+  logout
 };

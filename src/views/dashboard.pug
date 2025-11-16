@@ -1,0 +1,124 @@
+extends layouts/app
+
+block content
+  // Container principal com espaço da navbar
+  section(class="max-w-6xl mx-auto px-4 pt-10 pb-12 space-y-10")
+
+    // ROW 1 – Título + Onboarding ao lado
+    div(class="grid grid-cols-1 lg:grid-cols-[2fr,1.4fr] gap-6 items-stretch")
+      
+      // Coluna esquerda: título + resumo + CTA
+      div(class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col justify-between")
+        div
+          h1(class="text-3xl font-bold text-slate-900 mb-2") Dashboard
+          if user
+            p(class="text-slate-500") Bem-vindo de volta, #{user.name} 👋
+          else
+            p(class="text-slate-500") Bem-vindo à tua área pessoal da Events+.
+
+          p(class="mt-4 text-sm text-slate-600 leading-relaxed")
+            | Acompanha rapidamente a tua atividade na plataforma: eventos criados,
+            | participações e pontos acumulados.
+
+        div(class="mt-6 flex flex-wrap gap-3")
+          a(
+            href="/events/create"
+            class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition"
+          )
+            | + Criar novo evento
+          a(
+            href="/events"
+            class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 transition"
+          )
+            | Ver todos os eventos
+
+      // Coluna direita: onboarding / guia rápido
+      div(class="bg-slate-900 text-slate-50 rounded-2xl shadow-sm p-6 flex flex-col justify-between")
+        div
+          h2(class="text-lg font-semibold mb-2") Guia rápido
+          p(class="text-sm text-slate-200 mb-4")
+            | Começa a usar a Events+ em poucos passos.
+
+          ol(class="space-y-2 text-sm")
+            li
+              span(class="font-semibold") 1. 
+              | Cria o teu primeiro evento e define data, local e capacidade.
+            li
+              span(class="font-semibold") 2. 
+              | Partilha o link com a tua comunidade.
+            li
+              span(class="font-semibold") 3. 
+              | Gere inscrições e confirma presenças em tempo real.
+            li
+              span(class="font-semibold") 4. 
+              | Acompanha os teus pontos como organizador e participante.
+
+        a(
+          href="/events/create"
+          class="mt-5 inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-slate-900 text-sm font-medium hover:bg-slate-100 transition"
+        )
+          | Começar agora →
+
+    // ROW 2 – Estatísticas rápidas
+    section(class="space-y-4")
+      h2(class="text-xl font-semibold text-slate-800") Estatísticas rápidas
+      p(class="text-sm text-slate-500")
+        | Valores de exemplo enquanto a lógica de eventos ainda não está implementada.
+
+      div(class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5")
+
+        // Utilizadores registados
+        div(class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-1")
+          span(class="text-xs font-medium text-slate-500 uppercase tracking-wide") Utilizadores registados
+          span(class="text-3xl font-bold text-slate-900") 182
+          span(class="text-xs text-slate-400") (valor temporário)
+
+        // Eventos criados
+        div(class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-1")
+          span(class="text-xs font-medium text-slate-500 uppercase tracking-wide") Eventos criados
+          span(class="text-3xl font-bold text-slate-900") 25
+          span(class="text-xs text-slate-400") (valor temporário)
+
+        // Participações
+        div(class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-1")
+          span(class="text-xs font-medium text-slate-500 uppercase tracking-wide") Participações em eventos
+          span(class="text-3xl font-bold text-slate-900") 73
+          span(class="text-xs text-slate-400") (valor temporário)
+
+        // Pontos do utilizador
+        div(class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-1")
+          span(class="text-xs font-medium text-slate-500 uppercase tracking-wide") Os teus pontos
+          span(class="text-3xl font-bold text-emerald-600") #{user && user.totalPoints || 0}
+          span(class="text-xs text-slate-400") Por participação e presença
+
+    // ROW 3 – Ações rápidas em cards
+    section(class="space-y-4")
+      h2(class="text-xl font-semibold text-slate-800") Ações rápidas
+      div(class="grid grid-cols-1 md:grid-cols-3 gap-5")
+
+        // Criar evento
+        a(
+          href="/events/create"
+          class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-2 hover:border-blue-400 hover:shadow-md transition"
+        )
+          span(class="text-sm font-semibold text-slate-900") Criar novo evento
+          span(class="text-xs text-slate-500")
+            | Define título, descrição, data, local e capacidade máxima.
+        
+        // Explorar eventos
+        a(
+          href="/events"
+          class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-2 hover:border-blue-400 hover:shadow-md transition"
+        )
+          span(class="text-sm font-semibold text-slate-900") Explorar eventos
+          span(class="text-xs text-slate-500")
+            | Descobre eventos ativos na plataforma e inscreve-te.
+
+        // Eventos do utilizador
+        a(
+          href="/events/mine"
+          class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-2 hover:border-blue-400 hover:shadow-md transition"
+        )
+          span(class="text-sm font-semibold text-slate-900") Eventos que organizei
+          span(class="text-xs text-slate-500")
+            | Acede rapidamente aos eventos que criaste para os gerir.
