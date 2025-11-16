@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
 
 /* 
@@ -7,15 +8,55 @@ Handles user login, registration and authentication logic
 
 // Render login page
 function showLogin(req, res) {
-  res.render("auth/login");
+  res.render("auth/login", { title: "Login" });
 }
 
 // Handle login logic
-async function login(req, res) { }
+async function login(req, res) {
+  const { email, password } = req.body;
+  try {
+    // Validate required fields
+    if (!email || !password) {
+      return res.render("auth/login", {
+        error: "Email and password are required",
+        old: { email }
+      });
+    }
+
+    // Finds the user by email
+    const user = await User.findOne({ email });
+
+    // Compares the provided password with the stored hash password
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+
+    if (!user || !isMatch) {
+      return res.render("auth/login", {
+        error: "Invalid email or password",
+        old: { email }
+      });
+    }
+
+    // Store user info in session
+    req.session.user = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    }
+    return res.redirect("/dashboard");
+
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).render("auth/login", {
+      error: "Server error. Try again later.",
+      old: { email }
+    });
+  }
+ }
 
 // Render registration page
 function showRegister(req, res) {
-  res.render("auth/register");
+  res.render("auth/register", { title: "Register" });
 }
 
 // Handle user registration
