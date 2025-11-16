@@ -1,0 +1,14 @@
+nav(class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between")
+  a(href="/dashboard" class="flex items-center gap-2")
+    span(class="text-xl font-extrabold text-blue-600") Events+
+    span(class="hidden sm:inline text-xs text-slate-500") plataforma de eventos comunitários
+
+  div(class="flex items-center gap-4 text-sm")
+    a(href="/events" class="text-slate-700 hover:text-blue-600 transition")
+      | Eventos
+    a(href="/events/create" class="text-slate-700 hover:text-blue-600 transition")
+      | Criar evento
+
+    span(class="text-slate-500 hidden sm:inline") Olá, #{user.name}
+    a(href="/auth/logout" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition")
+      | Terminar sessão
