@@ -1,137 +1,220 @@
+// src/controllers/eventController.js
 import Event from "../models/event.model.js";
 
 /*
-  Event Controller
-  Handles listing all events
+  Lists all events (public)
+  Renders the main events listing page
 */
 export async function listEvents(req, res) {
   try {
-    const events = await Event.find().populate("organizer", "name email");
+    const events = await Event.find()
+      .populate("organizer", "name email")
+      .populate("participants", "name email")
+      .sort({ date: 1, time: 1, createdAt: -1 });
 
-    res.render("events/index", { title: "Eventos", events, user: req.session.user });
+    return res.render("events/index", {
+      title: "Eventos",
+      events,
+    });
   } catch (error) {
     console.error("Error listing events:", error);
-    res.status(500).send("Internal server error");
+    return res.status(500).render("events/index", {
+      title: "Eventos",
+      events: [],
+      error: "Ocorreu um erro ao carregar os eventos.",
+    });
   }
 }
 
 /*
   Renders the event creation form
+  Route must be protected with requireAuth
 */
 export function showCreateEventForm(req, res) {
-  res.render("events/create", { title: "Create Event", user: req.session.user });
+  return res.render("events/create", {
+    title: "Criar evento",
+    formData: {},
+  });
 }
 
-
-/* 
-  Creates the event to the database
+/*
+  Creates a new event in the database
+  Route must be protected with requireAuth
 */
 export async function createEvent(req, res) {
   try {
     const { title, description, date, time, location, capacity } = req.body;
-    const organizerId = req.session.user._id;
+    const userId = req.session.user.id; // requireAuth guarantees this exists
 
-    if (!title || !date || !location || !description || !capacity) {
-      res.render("events/create", { error: "All fields are required" });
+    // Basic validation for required fields
+    if (!title || !description || !date || !time || !location || !capacity) {
+      return res.status(400).render("events/create", {
+        title: "Criar evento",
+        error: "Todos os campos são obrigatórios.",
+        formData: req.body,
+      });
     }
 
-    const newEvent = new Event({
+    await Event.create({
       title,
       description,
       date,
       time,
       location,
       capacity,
-      organizer: organizerId,
-      status: "OPEN"
+      organizer: userId,
+      status: "OPEN",
     });
 
-    await newEvent.save();
-    res.redirect("/events");
-
+    return res.redirect("/events");
   } catch (error) {
     console.error("Error creating event:", error);
-    res.render("events/create", { message: "Internal server error" });
+    return res.status(500).render("events/create", {
+      title: "Criar evento",
+      error: "Ocorreu um erro ao criar o evento. Tenta novamente.",
+      formData: req.body,
+    });
   }
 }
 
-/**
- * List events created by the currently logged-in user
- * Renders the events/mine view with user's events
- */
+/*
+  Lists events created by the logged-in user
+  Route must be protected with requireAuth
+*/
 export async function myEvents(req, res) {
   try {
-    const userId = req.session.user._id;
+    const userId = req.session.user.id;
 
-    const events = await Event.find({ organizer: userId });
+    const events = await Event.find({ organizer: userId }).sort({
+      date: 1,
+      time: 1,
+      createdAt: -1,
+    });
 
-    res.render("events/mine", { title: "Os meus eventos", events, user: req.session.user });
+    return res.render("events/mine", {
+      title: "Os meus eventos",
+      events,
+    });
   } catch (error) {
     console.error("Error listing user events:", error);
-    res.render("events/mine", { title: "Os meus eventos", events: [], user: req.session.user, error: "Internal server error" });
+    return res.status(500).render("events/mine", {
+      title: "Os meus eventos",
+      events: [],
+      error: "Ocorreu um erro ao carregar os teus eventos.",
+    });
   }
 }
 
-/**
- * Show event details page
- * Renders the events/details view with event information
- */
+/*
+  Shows details of a specific event (public)
+*/
 export async function showEvent(req, res) {
   try {
     const eventId = req.params.id;
 
-    const event = await Event.findById(eventId).populate("organizer", "name email").populate("participants", "name email");
+    const event = await Event.findById(eventId)
+      .populate("organizer", "name email")
+      .populate("participants", "name email");
 
-    if (!event) return res.render("events/details", { title: "Event Details", user: req.session.user, error: "Event not found" });
+    if (!event) {
+      return res.status(404).render("events/show", {
+        title: "Evento não encontrado",
+        event: null,
+        error: "Este evento não existe ou foi removido.",
+      });
+    }
 
-    res.render("events/details", { title: "Event Details", event, user: req.session.user });
+    return res.render("events/show", {
+      title: event.title,
+      event,
+    });
   } catch (error) {
     console.error("Error fetching event details:", error);
-    res.render("events/details", { title: "Event Details", user: req.session.user, error: "Internal server error" });
+    return res.status(500).render("events/show", {
+      title: "Erro ao carregar evento",
+      event: null,
+      error: "Ocorreu um erro ao carregar este evento.",
+    });
   }
 }
 
-/**
- * Handle participation in an event
- * Adds the current user to the event's participants list
- * Checks status, capicity and if user is already a participant
- */
+/*
+  Adds the logged-in user as participant to an event
+  Route must be protected with requireAuth
+*/
 export async function participateInEvent(req, res) {
   try {
-    const { eventId } = req.params;
+    const eventId = req.params.id;
     const userId = req.session.user.id;
 
-    const event = await Event.findById(eventId).populate("participants", "_id");
+    const event = await Event.findById(eventId).populate("participants", "id name email");
 
-    // Checks if the event exists
-    if (!event) res.render("events/details", { title: "Event Details", user: req.session.user, error: "Event not found" });
+    if (!event) {
+      return res.status(404).render("events/show", {
+        title: "Evento não encontrado",
+        event: null,
+        error: "Este evento não existe ou foi removido.",
+      });
+    }
 
-    // Checks if the event is open
-    if (event.status !== "OPEN") res.render("events/details", { title: "Event Details", user: req.session.user, error: "Event is not open for participation" });
+    // Event must be open for participation
+    if (event.status !== "OPEN") {
+      return res.status(400).render("events/show", {
+        title: event.title,
+        event,
+        error: "Este evento não está aberto a novas inscrições.",
+      });
+    }
 
-    // Checks if the user is already a participant
-    if (event.participants.includes(userId)) res.render("events/details", { title: "Event Details", user: req.session.user, error: "You are already participating in this event" });
+    // Check if user is already a participant
+    const alreadyParticipant = event.participants.some((p) => p.id === userId);
 
-    // Checks if the event has reached its capacity
+    if (alreadyParticipant) {
+      return res.status(400).render("events/show", {
+        title: event.title,
+        event,
+        error: "Já estás inscrito neste evento.",
+      });
+    }
+
+    // Check capacity before adding the user
     if (event.participants.length >= event.capacity) {
       event.status = "FULL";
       await event.save();
-      return res.render("events/details", { title: "Event Details", user: req.session.user, error: "Event has reached its capacity" });
+
+      return res.status(400).render("events/show", {
+        title: event.title,
+        event,
+        error: "Este evento já atingiu a lotação máxima.",
+      });
     }
-    
-    // Adds the user to the participants list
+
+    // Add user as participant
     event.participants.push(userId);
 
-    // If after adding this participant we hit the capacity, mark event as full.
-    if (event.participants.length >= event.capacity) event.status = "FULL";
+    // If capacity reached after adding this user, mark as FULL
+    if (event.participants.length >= event.capacity) {
+      event.status = "FULL";
+    }
 
     await event.save();
 
-    res.redirect(`/events/${eventId}`);
+    return res.redirect(`/events/${eventId}`);
   } catch (error) {
     console.error("Error participating in event:", error);
-    res.render("events/details", { title: "Event Details", user: req.session.user, error: "Internal server error" });
+    return res.status(500).render("events/show", {
+      title: "Erro ao participar",
+      event: null,
+      error: "Ocorreu um erro ao processar a tua participação.",
+    });
   }
 }
 
-export default { listEvents, showCreateEventForm, createEvent, showEvent, myEvents, participateInEvent };
+export default {
+  listEvents,
+  showCreateEventForm,
+  createEvent,
+  myEvents,
+  showEvent,
+  participateInEvent,
+};
