@@ -1,0 +1,112 @@
+extends ../layouts/app
+
+block content
+  // Main container for the create event page (centered content)
+  div(class="max-w-3xl mx-auto py-8")
+    // Header with title and back link
+    div(class="flex items-center justify-between mb-6")
+      h1(class="text-2xl font-bold text-slate-900") Criar evento
+      a(href="/events" class="inline-flex items-center text-sm text-slate-500 hover:text-slate-700")
+        span ← Voltar à lista
+
+    // Error message section (shown only when 'error' exists)
+    if error
+      p(class="mt-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3")= error
+
+    // Event creation form
+    form(
+      action="/events/create"
+      method="POST"
+      class="mt-6 bg-white shadow-sm border border-slate-200 rounded-2xl px-6 py-6 space-y-5"
+    )
+      // Title field
+      div(class="space-y-1")
+        label(for="title" class="block text-sm font-medium text-slate-700") Título
+        input#title(
+          type="text"
+          name="title"
+          value=formData.title || ""
+          placeholder="Ex.: Torneio de xadrez da comunidade"
+          class="block w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        )
+
+      // Description field
+      div(class="space-y-1")
+        label(for="description" class="block text-sm font-medium text-slate-700") Descrição
+        textarea#description(
+          name="description"
+          rows="4"
+          placeholder="Descreve o evento, objetivo, público-alvo, etc."
+          class="block w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        ) #{formData.description || ""}
+
+      // Date and time fields (two-column layout on medium screens and above)
+      div(class="grid grid-cols-1 md:grid-cols-2 gap-4")
+        // Date field
+        div(class="space-y-1")
+          label(for="date" class="block text-sm font-medium text-slate-700") Data
+          input#date(
+            type="date"
+            name="date"
+            value=formData.date || ""
+            class="block w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          )
+
+        // Time field
+        div(class="space-y-1")
+          label(for="time" class="block text-sm font-medium text-slate-700") Hora
+          input#time(
+            type="time"
+            name="time"
+            value=formData.time || ""
+            class="block w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          )
+
+      // Location field with autocomplete suggestions
+      div(class="space-y-1")
+        label(for="location" class="block text-sm font-medium text-slate-700") Localização
+        div(class="relative")
+          // Main location text input used by the user
+          input#location(
+            type="text"
+            name="location"
+            autocomplete="off"
+            value=formData.location || ""
+            placeholder="Começa a escrever a morada…"
+            class="block w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          )
+
+          // Dropdown list for location suggestions
+          ul#location-suggestions(
+            class="hidden absolute mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto text-sm"
+          )
+
+          // Hidden fields used to store selected coordinates
+          input#location-lat(type="hidden" name="locationLat" value=formData.locationLat || "")
+          input#location-lon(type="hidden" name="locationLon" value=formData.locationLon || "")
+
+        p(class="text-xs text-slate-500 mt-1")
+          | Sugestões fornecidas por Nominatim (OpenStreetMap).
+
+      // Capacity field (maximum number of participants)
+      div(class="space-y-1")
+        label(for="capacity" class="block text-sm font-medium text-slate-700") Capacidade
+        input#capacity(
+          type="number"
+          name="capacity"
+          min="1"
+          value=formData.capacity || ""
+          placeholder="Número máximo de participantes"
+          class="block w-full max-w-xs rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        )
+
+      // Form submit button
+      div(class="pt-4 flex justify-end")
+        button(
+          type="submit"
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+        )
+          span Criar evento
+
+  // Page-specific JavaScript for location autocomplete
+  script(src="/js/location-autocomplete.js" defer)

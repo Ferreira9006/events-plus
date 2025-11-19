@@ -1,17 +1,19 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
 
 const EventSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true, },
-    
-    description: { type: String, required: true, trim: true, },
+    title: { type: String, required: true, trim: true },
 
-    date: { type: Date, required: true, },
+    description: { type: String, required: true, trim: true },
 
-    location: { type: String, required: true, trim: true, },
+    date: { type: Date, required: true },
 
-    capacity: { type: Number, required: true, min: 1, },
+    location: { type: String, required: true, trim: true },
+
+    locationLat: { type: Number },
+    locationLon: { type: Number },
+
+    capacity: { type: Number, required: true, min: 1 },
 
     organizer: {
       type: mongoose.Schema.Types.ObjectId,
@@ -19,17 +21,19 @@ const EventSchema = new mongoose.Schema(
       required: true,
     },
 
-    participants: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    }],
+    participants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
     status: {
       type: String,
       enum: ["OPEN", "FULL", "CANCELLED", "FINISHED"],
       default: "OPEN",
     },
-  }, 
+  },
   { timestamps: true }
 );
 

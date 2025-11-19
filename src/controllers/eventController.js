@@ -15,6 +15,7 @@ export async function listEvents(req, res) {
     return res.render("events/index", {
       title: "Eventos",
       events,
+      user: req.session.user || null,
     });
   } catch (error) {
     console.error("Error listing events:", error);
@@ -34,6 +35,7 @@ export function showCreateEventForm(req, res) {
   return res.render("events/create", {
     title: "Criar evento",
     formData: {},
+    user: req.session.user,
   });
 }
 
@@ -43,8 +45,8 @@ export function showCreateEventForm(req, res) {
 */
 export async function createEvent(req, res) {
   try {
-    const { title, description, date, time, location, capacity } = req.body;
-    const userId = req.session.user.id; // requireAuth guarantees this exists
+    const { title, description, date, time, location, capacity, locationLat, locationLon } = req.body;
+    const userId = req.session.user.id;
 
     // Basic validation for required fields
     if (!title || !description || !date || !time || !location || !capacity) {
@@ -55,12 +57,15 @@ export async function createEvent(req, res) {
       });
     }
 
+    const eventDateTime = new Date(`${date}T${time}`);
+
     await Event.create({
       title,
       description,
-      date,
-      time,
+      date: eventDateTime,
       location,
+      locationLat: locationLat || null,
+      locationLon: locationLon || null,
       capacity,
       organizer: userId,
       status: "OPEN",

@@ -26,6 +26,6 @@ router.get("/mine", requireAuth, eventController.myEvents);
 router.post("/create", requireAuth, eventController.createEvent);
 
 // Handle participation in an event (requires login)
-router.post("/:id/participate", requireAuth, eventController.participateEvent);
+router.post("/:id/participate", requireAuth, eventController.participateInEvent);
 
 export default router;
