@@ -33,6 +33,12 @@ app.use(session({
 })
 );
 
+// Pass user to all routes if exists
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null;
+  next();
+});
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
