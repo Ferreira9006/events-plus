@@ -1,0 +1,117 @@
+extends ../layouts/app
+
+block content
+  // Main container for the "Edit Event" page
+  section(class="max-w-3xl mx-auto px-4 pt-10 pb-12 space-y-8")
+
+    // Page header: title + back link
+    div(class="flex items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-extrabold text-slate-900 leading-tight")
+          | Editar evento
+        p(class="text-slate-500 mt-1")
+          | Atualiza as informações do evento.
+      a(
+        href=`/events/${event._id}`
+        class="text-sm font-semibold text-slate-500 hover:text-slate-700 hover:underline"
+      )
+        | Voltar ao evento
+
+    // Edit event form
+    form(
+      method="post"
+      action=`/events/${event._id}/edit`
+      class="mt-4 space-y-6 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"
+    )
+
+      // Event title field
+      div(class="space-y-1")
+        label(for="title" class="block text-sm font-medium text-slate-700")
+          | Título
+        input#title(
+          type="text"
+          name="title"
+          required
+          value=event.title
+          class="mt-1 block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+        )
+
+      // Event description field
+      div(class="space-y-1")
+        label(for="description" class="block text-sm font-medium text-slate-700")
+          | Descrição
+        textarea#description(
+          name="description"
+          rows="4"
+          required
+          class="mt-1 block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+        ) #{event.description}
+
+      // Date and time fields
+      div(class="grid grid-cols-1 sm:grid-cols-2 gap-4")
+
+        // Date input
+        div(class="space-y-1")
+          label(for="date" class="block text-sm font-medium text-slate-700")
+            | Data
+          input#date(
+            type="date"
+            name="date"
+            required
+            value=event.date
+            class="mt-1 block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+          )
+
+        // Time input
+        div(class="space-y-1")
+          label(for="time" class="block text-sm font-medium text-slate-700")
+            | Hora
+          input#time(
+            type="time"
+            name="time"
+            required
+            value=event.time
+            class="mt-1 block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+          )
+
+      // Location field
+      div(class="space-y-1")
+        label(for="location" class="block text-sm font-medium text-slate-700")
+          | Local
+        input#location(
+          type="text"
+          name="location"
+          required
+          value=event.location
+          class="mt-1 block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+        )
+
+      // Capacity field
+      div(class="space-y-1")
+        label(for="capacity" class="block text-sm font-medium text-slate-700")
+          | Capacidade máxima
+        input#capacity(
+          type="number"
+          name="capacity"
+          min="1"
+          required
+          value=event.capacity
+          class="mt-1 block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+        )
+
+      // Form actions
+      div(class="pt-4 flex items-center justify-between gap-4")
+
+        // Cancel link
+        a(
+          href=`/events/${event._id}`
+          class="text-sm font-semibold text-slate-500 hover:text-slate-700 hover:underline"
+        )
+          | Cancelar
+
+        // Submit button
+        button(
+          type="submit"
+          class="inline-flex items-center justify-center px-5 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+        )
+          | Guardar alterações

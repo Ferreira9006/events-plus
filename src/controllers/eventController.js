@@ -12,11 +12,19 @@ export async function listEvents(req, res) {
       .populate("participants", "name email")
       .sort({ date: 1, time: 1, createdAt: -1 });
 
+    // Checks if the user is already a participant for each event
+    const eventsWithParticipation = events.map((event) => {
+      const isParticipant = req.session.user
+        ? event.participants.some((p) => p.id === req.session.user.id)
+        : false;
+      return { ...event.toObject(), isParticipant };
+    });
+
     return res.render("events/index", {
       title: "Eventos",
-      events,
-      user: req.session.user || null,
+      events: eventsWithParticipation,
     });
+
   } catch (error) {
     console.error("Error listing events:", error);
     return res.status(500).render("events/index", {
@@ -35,7 +43,6 @@ export function showCreateEventForm(req, res) {
   return res.render("events/create", {
     title: "Criar evento",
     formData: {},
-    user: req.session.user,
   });
 }
 
@@ -57,12 +64,11 @@ export async function createEvent(req, res) {
       });
     }
 
-    const eventDateTime = new Date(`${date}T${time}`);
-
     await Event.create({
       title,
       description,
-      date: eventDateTime,
+      date: new Date(date),
+      time,
       location,
       locationLat: locationLat || null,
       locationLon: locationLon || null,
@@ -129,10 +135,22 @@ export async function showEvent(req, res) {
       });
     }
 
+    // Check if the logged-in user is a participant
+    const isParticipant = req.session.user
+      ? event.participants.some(p => p.id === req.session.user.id)
+      : false;
+
+    const isOwner = req.session.user
+      ? event.organizer.id === req.session.user.id
+      : false;
+
     return res.render("events/show", {
       title: event.title,
       event,
+      isParticipant,
+      isOwner
     });
+
   } catch (error) {
     console.error("Error fetching event details:", error);
     return res.status(500).render("events/show", {
@@ -158,7 +176,7 @@ export async function participateInEvent(req, res) {
       return res.status(404).render("events/show", {
         title: "Evento não encontrado",
         event: null,
-        error: "Este evento não existe ou foi removido.",
+        error: "Este eevento não existe ou foi removido.",
       });
     }
 
@@ -204,7 +222,7 @@ export async function participateInEvent(req, res) {
 
     await event.save();
 
-    return res.redirect(`/events/${eventId}`);
+    return res.redirect(`/events`);
   } catch (error) {
     console.error("Error participating in event:", error);
     return res.status(500).render("events/show", {
@@ -215,6 +233,76 @@ export async function participateInEvent(req, res) {
   }
 }
 
+
+//  Removes the logged-in user from the participants of an event
+//  Route must be protected with requireAuth
+export async function leaveEvent(req, res) {
+  try {
+    const eventId = req.params.id;
+    const userId = req.session.user.id;
+
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.redirect("/events");
+    }
+
+    event.participants = event.participants.filter(
+      p => p.toString() !== userId
+    );
+
+    if (event.status === "FULL") {
+      event.status = "OPEN";
+    }
+
+    await event.save();
+
+    res.redirect(`/events`);
+  } catch (error) {
+    console.log("Error leaving event:", error);
+    res.redirect(`/events`);
+  }
+}
+
+export function showEditForm(req, res) {
+  const event = req.event;
+
+  // Convert date objetct
+  const formattedDate = event.date
+  ? event.date.toISOString().split('T')[0]
+  : '';
+
+  res.render("events/edit", {
+    title: "Editar evento",
+    event: {
+      ...event.toObject(),
+      date: formattedDate
+    }
+  });
+}
+
+export async function updateEvent(req, res) {
+  const { title, description, date, time, location, capacity } = req.body;
+
+  req.event.title = title;
+  req.event.description = description;
+  req.event.date = new Date(date);
+  req.event.time = time;
+  req.event.location = location;
+  req.event.capacity = capacity;
+
+  await req.event.save();
+
+  res.redirect(`/events/${req.event._id}`);
+}
+
+export async function deleteEvent(req, res) {
+  await req.event.deleteOne();
+  res.redirect("/events");
+}
+
+
+
 export default {
   listEvents,
   showCreateEventForm,
@@ -222,4 +310,8 @@ export default {
   myEvents,
   showEvent,
   participateInEvent,
+  leaveEvent,
+  showEditForm,
+  updateEvent,
+  deleteEvent
 };

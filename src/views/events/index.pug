@@ -112,12 +112,30 @@ block content
 
               // Participation button logic
               if event.status === 'OPEN'
-                form(method="post" action=`/events/${event._id}/participate`)
-                  button(
-                    type="submit"
-                    class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700"
-                  )
-                    | Participar
+                if user
+                  if event.isParticipant
+                    form(method="post" action=`/events/${event._id}/leave`)
+                      button(
+                        type="submit"
+                        class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 text-white hover:bg-rose-700"
+                      )
+                        | Remover inscrição
+                  else if event.status === 'OPEN'
+                    form(method="post" action=`/events/${event._id}/participate`)
+                      button(
+                        type="submit"
+                        class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700"
+                      )
+                        | Inscrever-me
               else
-                span(class="text-xs text-slate-400 italic")
-                  | Participações indisponíveis
+                if user
+                if event.isParticipant
+                  form(method="post" action=`/events/${event._id}/leave`)
+                    button(
+                      type="submit"
+                      class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 text-white hover:bg-rose-700"
+                    )
+                      | Remover inscrição
+                else if event.status === 'OPEN'
+                  span(class="text-xs text-slate-400 italic")
+                    | Participações indisponíveis
