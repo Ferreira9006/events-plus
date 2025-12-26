@@ -10,10 +10,11 @@ const EventSchema = new mongoose.Schema(
 
     time: { type: String, required: true },
 
-    location: { type: String, required: true, trim: true },
-
-    locationLat: { type: Number },
-    locationLon: { type: Number },
+    location: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "Location",
+      required: true,
+     },
 
     capacity: { type: Number, required: true, min: 1 },
 

@@ -1,5 +1,6 @@
 // src/controllers/eventController.js
 import Event from "../models/event.model.js";
+import Location from "../models/location.model.js";
 
 /*
   Lists all events (public)
@@ -58,14 +59,27 @@ export async function createEvent(req, res) {
       return res.redirect("/events/create");
     }
 
+    let checkLocation = await Location.findOne({
+      latitude: locationLat,
+      longitude: locationLon
+    });
+
+    if (!checkLocation) {
+      checkLocation = await Location.create({
+        name: location,
+        address: location,
+        latitude: locationLat,
+        longitude: locationLon,
+        source: "OSM"
+      });
+    }
+
     await Event.create({
       title,
       description,
       date: new Date(date),
       time,
-      location,
-      locationLat: locationLat || null,
-      locationLon: locationLon || null,
+      location: checkLocation._id,
       capacity,
       organizer: userId,
       status: "OPEN",
@@ -73,6 +87,7 @@ export async function createEvent(req, res) {
 
     req.flash("success", "Evento criado com sucesso.");
     return res.redirect("/events");
+    
   } catch (error) {
     console.error("Error creating event:", error);
     req.flash("error", "Ocorreu um erro ao criar o evento. Tenta novamente.");
