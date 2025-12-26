@@ -1,19 +1,35 @@
+// src/controllers/authController.js
+
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
 
-/* 
-Auth Controller
-Handles user login, registration and authentication logic
-*/
+/**
+ * Authentication Controller
+ *
+ * Handles:
+ * - User login
+ * - User registration
+ * - Session management
+ */
 
-// Render login page
+/**
+ * Render the login page.
+ */
 function showLogin(req, res) {
   res.render("auth/login", { title: "Login" });
 }
 
-// Handle login logic
+/**
+ * Handle user login.
+ *
+ * - Validates required fields
+ * - Checks if the user exists
+ * - Compares the provided password with the stored hash
+ * - Stores user data in the session upon successful authentication
+ */
 async function login(req, res) {
   const { email, password } = req.body;
+
   try {
     // Validate required fields
     if (!email || !password) {
@@ -21,7 +37,7 @@ async function login(req, res) {
       return res.redirect("/auth/login");
     }
 
-    // Finds the user by email
+    // Find user by email
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -29,7 +45,7 @@ async function login(req, res) {
       return res.redirect("/auth/login");
     }
 
-    // Compares the provided password with the stored hash password
+    // Compare provided password with stored hash
     const isMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!isMatch) {
@@ -37,14 +53,14 @@ async function login(req, res) {
       return res.redirect("/auth/login");
     }
 
-    // Store user info in session
+    // Store essential user information in session
     req.session.user = {
       id: user._id,
       name: user.name,
       email: user.email,
-      role: user.role
-    }
-    
+      role: user.role,
+    };
+
     req.flash("success", `Bem-vindo de volta, ${user.name}!`);
     return res.redirect("/dashboard");
 
@@ -53,14 +69,23 @@ async function login(req, res) {
     req.flash("error", "Server error. Try again later.");
     return res.redirect("/auth/login");
   }
- }
+}
 
-// Render registration page
+/**
+ * Render the registration page.
+ */
 function showRegister(req, res) {
   res.render("auth/register", { title: "Register" });
 }
 
-// Handle user registration
+/**
+ * Handle user registration.
+ *
+ * - Validates required fields
+ * - Prevents duplicate email registration
+ * - Creates a new user with a hashed password
+ * - Redirects to login page upon success
+ */
 async function register(req, res) {
   const { name, email, password } = req.body;
 
@@ -69,44 +94,49 @@ async function register(req, res) {
     if (!name || !email || !password) {
       req.flash("error", "Todos os campos são obrigatórios.");
       return res.render("auth/register", {
-        old: { name, email }
+        old: { name, email },
       });
     }
 
-    // Check if the email is already registered
+    // Check if email is already registered
     const emailExists = await User.findOne({ email });
     if (emailExists) {
       req.flash("error", "O email já está em uso.");
       return res.render("auth/register", {
-        old: { name, email }
+        old: { name, email },
       });
     }
 
-    // Create a new user
+    // Create new user instance
     const newUser = new User({
       name,
       email,
-      passwordHash: password
+      passwordHash: password, // Hashing is handled in the User model pre-save hook
     });
 
-    // Save user to the database
+    // Persist user to database
     await newUser.save();
 
-    // Redirect to login page after successful registration
-    req.flash("success", "Registo realizado com sucesso. Por favor, inicie sessão.");
+    req.flash(
+      "success",
+      "Registo realizado com sucesso. Por favor, inicie sessão."
+    );
     return res.redirect("/auth/login");
 
   } catch (error) {
     console.error("Registration error:", error);
 
-    // Render page with error message and preserved form data
+    // Render form again with error message and preserved input data
     return res.status(500).render("auth/register", {
       error: "Server error. Try again later.",
-      old: { name, email }
+      old: { name, email },
     });
   }
 }
 
+/**
+ * Log the user out by destroying the session.
+ */
 function logout(req, res) {
   req.session.destroy(() => {
     res.redirect("/");
@@ -118,5 +148,5 @@ export default {
   showRegister,
   login,
   register,
-  logout
+  logout,
 };

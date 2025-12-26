@@ -1,11 +1,16 @@
 // src/controllers/eventController.js
+
 import Event from "../models/event.model.js";
 import Location from "../models/location.model.js";
 
-/*
-  Lists all events (public)
-  Renders the main events listing page
-*/
+/**
+ * List all public events.
+ * Renders the main events listing page.
+ *
+ * - Events are ordered by date, time and creation date
+ * - Organizer and participants are populated for display
+ * - Adds an `isParticipant` flag per event for UI logic
+ */
 export async function listEvents(req, res) {
   try {
     const events = await Event.find()
@@ -13,11 +18,12 @@ export async function listEvents(req, res) {
       .populate("participants", "name email")
       .sort({ date: 1, time: 1, createdAt: -1 });
 
-    // Checks if the user is already a participant for each event
+    // Determine if the logged-in user is a participant in each event
     const eventsWithParticipation = events.map((event) => {
       const isParticipant = req.session.user
         ? event.participants.some((p) => p.id === req.session.user.id)
         : false;
+
       return { ...event.toObject(), isParticipant };
     });
 
@@ -33,10 +39,10 @@ export async function listEvents(req, res) {
   }
 }
 
-/*
-  Renders the event creation form
-  Route must be protected with requireAuth
-*/
+/**
+ * Render the event creation form.
+ * Route must be protected with `requireAuth`.
+ */
 export function showCreateEventForm(req, res) {
   return res.render("events/create", {
     title: "Criar evento",
@@ -44,36 +50,55 @@ export function showCreateEventForm(req, res) {
   });
 }
 
-/*
-  Creates a new event in the database
-  Route must be protected with requireAuth
-*/
+/**
+ * Create a new event.
+ *
+ * - Validates required fields
+ * - Resolves or creates a Location based on latitude/longitude
+ * - Stores only the Location reference in the Event
+ * - Uses flash messages and redirect for UX consistency
+ *
+ * Route must be protected with `requireAuth`.
+ */
 export async function createEvent(req, res) {
   try {
-    const { title, description, date, time, location, capacity, locationLat, locationLon } = req.body;
+    const {
+      title,
+      description,
+      date,
+      time,
+      location,
+      capacity,
+      locationLat,
+      locationLon
+    } = req.body;
+
     const userId = req.session.user.id;
 
-    // Basic validation for required fields
+    // Basic validation of required fields
     if (!title || !description || !date || !time || !location || !capacity) {
       req.flash("error", "Por favor, preenche todos os campos obrigatórios.");
       return res.redirect("/events/create");
     }
 
+    // Attempt to find an existing location by coordinates
     let checkLocation = await Location.findOne({
       latitude: locationLat,
-      longitude: locationLon
+      longitude: locationLon,
     });
 
+    // Create a new location if none exists
     if (!checkLocation) {
       checkLocation = await Location.create({
         name: location,
         address: location,
         latitude: locationLat,
         longitude: locationLon,
-        source: "OSM"
+        source: "OSM",
       });
     }
 
+    // Create the event with a reference to the Location
     await Event.create({
       title,
       description,
@@ -95,10 +120,10 @@ export async function createEvent(req, res) {
   }
 }
 
-/*
-  Lists events created by the logged-in user
-  Route must be protected with requireAuth
-*/
+/**
+ * List events created by the logged-in user.
+ * Route must be protected with `requireAuth`.
+ */
 export async function myEvents(req, res) {
   try {
     const userId = req.session.user.id;
@@ -113,6 +138,7 @@ export async function myEvents(req, res) {
       title: "Os meus eventos",
       events,
     });
+
   } catch (error) {
     console.error("Error listing user events:", error);
 
@@ -124,9 +150,12 @@ export async function myEvents(req, res) {
   }
 }
 
-/*
-  Shows details of a specific event (public)
-*/
+/**
+ * Show details of a single event (public view).
+ *
+ * - Populates organizer and participants
+ * - Determines if the user is a participant or the owner
+ */
 export async function showEvent(req, res) {
   try {
     const eventId = req.params.id;
@@ -140,7 +169,7 @@ export async function showEvent(req, res) {
       return res.redirect("/events");
     }
 
-    // Check if the logged-in user is a participant
+    // Check participation and ownership status
     const isParticipant = req.session.user
       ? event.participants.some(p => p.id === req.session.user.id)
       : false;
@@ -153,7 +182,7 @@ export async function showEvent(req, res) {
       title: event.title,
       event,
       isParticipant,
-      isOwner
+      isOwner,
     });
 
   } catch (error) {
@@ -163,16 +192,22 @@ export async function showEvent(req, res) {
   }
 }
 
-/*
-  Adds the logged-in user as participant to an event
-  Route must be protected with requireAuth
-*/
+/**
+ * Add the logged-in user as a participant in an event.
+ *
+ * - Checks event status and capacity
+ * - Prevents duplicate registrations
+ * - Automatically updates event status when full
+ *
+ * Route must be protected with `requireAuth`.
+ */
 export async function participateInEvent(req, res) {
   try {
     const eventId = req.params.id;
     const userId = req.session.user.id;
 
-    const event = await Event.findById(eventId).populate("participants", "id name email");
+    const event = await Event.findById(eventId)
+      .populate("participants", "id name email");
 
     if (!event) {
       req.flash("error", "Este evento não existe ou foi removido.");
@@ -185,15 +220,17 @@ export async function participateInEvent(req, res) {
       return res.redirect("/events");
     }
 
-    // Check if user is already a participant
-    const alreadyParticipant = event.participants.some((p) => p.id === userId);
+    // Prevent duplicate participation
+    const alreadyParticipant = event.participants.some(
+      (p) => p.id === userId
+    );
 
     if (alreadyParticipant) {
       req.flash("error", "Já estás inscrito neste evento.");
       return res.redirect(`/events/${event._id}`);
     }
 
-    // Check capacity before adding the user
+    // Check capacity before adding participant
     if (event.participants.length >= event.capacity) {
       event.status = "FULL";
       await event.save();
@@ -202,10 +239,10 @@ export async function participateInEvent(req, res) {
       return res.redirect(`/events/${event._id}`);
     }
 
-    // Add user as participant
+    // Add participant
     event.participants.push(userId);
 
-    // If capacity reached after adding this user, mark as FULL
+    // Update status if capacity is reached
     if (event.participants.length >= event.capacity) {
       event.status = "FULL";
     }
@@ -222,9 +259,13 @@ export async function participateInEvent(req, res) {
   }
 }
 
-
-//  Removes the logged-in user from the participants of an event
-//  Route must be protected with requireAuth
+/**
+ * Remove the logged-in user from an event's participants.
+ *
+ * - Reopens the event if it was previously full
+ *
+ * Route must be protected with `requireAuth`.
+ */
 export async function leaveEvent(req, res) {
   try {
     const eventId = req.params.id;
@@ -237,10 +278,12 @@ export async function leaveEvent(req, res) {
       return res.redirect("/events");
     }
 
+    // Remove user from participants list
     event.participants = event.participants.filter(
       p => p.toString() !== userId
     );
 
+    // Reopen event if capacity is no longer full
     if (event.status === "FULL") {
       event.status = "OPEN";
     }
@@ -249,6 +292,7 @@ export async function leaveEvent(req, res) {
 
     req.flash("success", "Inscrição removida com sucesso.");
     res.redirect(`/events`);
+
   } catch (error) {
     console.log("Error leaving event:", error);
     req.flash("error", "Ocorreu um erro ao remover a tua inscrição.");
@@ -256,10 +300,15 @@ export async function leaveEvent(req, res) {
   }
 }
 
+/**
+ * Render the event edit form.
+ *
+ * - Populates the Location reference
+ * - Formats the date for HTML input compatibility (YYYY-MM-DD)
+ */
 export async function showUpdateEventForm(req, res) {
   const event = await req.event.populate("location");
 
-  // Converts date to YYYY-MM-DD format for input fields
   const formattedDate = event.date
     ? event.date.toISOString().split("T")[0]
     : "";
@@ -273,6 +322,13 @@ export async function showUpdateEventForm(req, res) {
   });
 }
 
+/**
+ * Update an existing event.
+ *
+ * - Updates basic event fields
+ * - Resolves or creates a Location based on coordinates
+ * - Ensures data normalization by storing only the Location reference
+ */
 export async function updateEvent(req, res) {
   try {
     const {
@@ -286,14 +342,14 @@ export async function updateEvent(req, res) {
       locationLon,
     } = req.body;
 
-    // Atualizar campos simples
+    // Update simple fields
     req.event.title = title;
     req.event.description = description;
     req.event.date = new Date(date);
     req.event.time = time;
     req.event.capacity = capacity;
 
-    // Resolver Location (igual ao create)
+    // Resolve Location (same logic as event creation)
     let checkLocation = await Location.findOne({
       latitude: locationLat,
       longitude: locationLon,
@@ -309,13 +365,14 @@ export async function updateEvent(req, res) {
       });
     }
 
-    // Guardar referência correta
+    // Store correct Location reference
     req.event.location = checkLocation._id;
 
     await req.event.save();
 
     req.flash("success", "Evento atualizado com sucesso.");
     return res.redirect(`/events/${req.event._id}`);
+
   } catch (error) {
     console.error("Error updating event:", error);
     req.flash("error", "Ocorreu um erro ao atualizar o evento.");
@@ -323,14 +380,15 @@ export async function updateEvent(req, res) {
   }
 }
 
-
+/**
+ * Delete an event.
+ * Route must be protected (owner or admin).
+ */
 export async function deleteEvent(req, res) {
   await req.event.deleteOne();
   req.flash("success", "Evento eliminado com sucesso.");
   res.redirect("/events");
 }
-
-
 
 export default {
   listEvents,
@@ -342,5 +400,5 @@ export default {
   leaveEvent,
   showUpdateEventForm,
   updateEvent,
-  deleteEvent
+  deleteEvent,
 };
