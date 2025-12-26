@@ -42,6 +42,13 @@ if user
             )
               | Os meus eventos
 
+            if user.role == 'ADMIN'
+              a(
+                href="/admin"
+                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+              )
+                | Administração  
+
             hr(class="my-1 border-slate-200")
 
             a(

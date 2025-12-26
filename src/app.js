@@ -9,6 +9,7 @@ import flash from 'connect-flash';
 import { requireAuth } from './middleware/auth.js';
 import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 dotenv.config();
 
@@ -59,6 +60,8 @@ app.get("/dashboard", requireAuth, (req, res) => {
 app.use("/auth", authRoutes);
   
 app.use("/events", eventRoutes);
+
+app.use("/admin", adminRoutes);
 
 
 export default app;

@@ -1,0 +1,51 @@
+doctype html
+html(lang="pt" data-theme="light")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Admin | #{title}
+    link(rel="stylesheet" href="/css/style.css")
+
+  body(class="bg-base-200 min-h-screen")
+
+    div(class="drawer lg:drawer-open")
+
+      input#admin-drawer(type="checkbox" class="drawer-toggle")
+
+      // MAIN CONTENT
+      div(class="drawer-content flex flex-col")
+
+        // TOP NAVBAR
+        header(class="navbar bg-base-100 shadow-sm px-6 border-b")
+          div(class="flex-1 flex items-center gap-3")
+            label(for="admin-drawer" class="btn btn-square btn-ghost lg:hidden")
+              svg(...)
+
+            span(class="text-lg font-bold") Admin Panel
+
+          div
+            a(href="/" class="btn btn-sm btn-outline")
+              | Voltar ao site
+
+        // PAGE CONTENT
+        main(class="p-6")
+          block content
+
+      // SIDEBAR
+      div(class="drawer-side")
+        label(for="admin-drawer" class="drawer-overlay")
+        aside(class="menu p-4 w-64 bg-base-100 text-base-content h-screen")
+
+          h2(class="menu-title text-xs uppercase tracking-wide")
+            | Gestão
+
+          ul
+            li
+              a(href="/admin" class="active")
+                | Dashboard
+            li
+              a(href="/admin/users")
+                | Utilizadores
+            li
+              a(href="/admin/locations")
+                | Localizações
