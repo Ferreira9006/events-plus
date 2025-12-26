@@ -14,6 +14,7 @@ import Location from "../models/location.model.js";
 export async function listEvents(req, res) {
   try {
     const events = await Event.find()
+      .populate("location")
       .populate("organizer", "name email")
       .populate("participants", "name email")
       .sort({ date: 1, time: 1, createdAt: -1 });
@@ -128,11 +129,10 @@ export async function myEvents(req, res) {
   try {
     const userId = req.session.user.id;
 
-    const events = await Event.find({ organizer: userId }).sort({
-      date: 1,
-      time: 1,
-      createdAt: -1,
-    });
+    const events = await Event.find({ organizer: userId })
+    .populate("location")
+    .populate("participants")
+    .sort({ date: 1, time: 1, createdAt: -1, });
 
     return res.render("events/mine", {
       title: "Os meus eventos",
@@ -143,6 +143,7 @@ export async function myEvents(req, res) {
     console.error("Error listing user events:", error);
 
     req.flash("error", "Ocorreu um erro ao carregar os teus eventos.");
+    
     return res.status(500).render("events/mine", {
       title: "Os meus eventos",
       events: [],

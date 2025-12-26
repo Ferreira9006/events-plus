@@ -17,11 +17,11 @@ router.get("/", eventController.listEvents);
 // Protected route — show event creation form
 router.get("/create", requireAuth, eventController.showCreateEventForm);
 
-// Show event details (public)
-router.get("/:id", eventController.showEvent);
-
 // List events created by the logged-in user
 router.get("/mine", requireAuth, eventController.myEvents);
+
+// Show event details (public)
+router.get("/:id", eventController.showEvent);
 
 // Protected route — handle event creation
 router.post("/create", requireAuth, eventController.createEvent);
