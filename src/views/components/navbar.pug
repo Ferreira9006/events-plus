@@ -1,6 +1,6 @@
 if user 
   nav(class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between")
-    a(href="/dashboard" class="flex items-center gap-2")
+    a(href="/" class="flex items-center gap-2")
       span(class="text-xl font-extrabold text-blue-600") Events+
       span(class="hidden sm:inline text-xs text-slate-500") plataforma de eventos comunitários
 
@@ -10,9 +10,45 @@ if user
       a(href="/events/create" class="text-slate-700 hover:text-blue-600 transition")
         | Criar evento
 
-      span(class="text-slate-500 hidden sm:inline") Olá, #{user.name}
-      a(href="/auth/logout" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition")
-        | Terminar sessão
+      // User dropdown
+      div(class="relative")
+        details(class="group")
+          summary(
+            class="list-none flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer transition"
+          )
+            span Olá, #{user.name}
+            svg(
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 text-slate-500 transition-transform group-open:rotate-180"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            )
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7")
+
+          // Dropdown
+          div(
+            class="absolute right-0 mt-2 w-44 rounded-xl bg-white border border-slate-200 shadow-lg py-1 z-50"
+          )
+            a(
+              href="/dashboard"
+              class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+            )
+              | Dashboard
+
+            a(
+              href="/events/mine"
+              class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+            )
+              | Os meus eventos
+
+            hr(class="my-1 border-slate-200")
+
+            a(
+              href="/auth/logout"
+              class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50"
+            )
+              | Terminar sessão
 
 else 
   nav(class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between")
