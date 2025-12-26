@@ -33,7 +33,7 @@ router.post("/:id/participate", requireAuth, eventController.participateInEvent)
 router.post("/:id/leave", requireAuth, eventController.leaveEvent);
 
 // Protected routes for editing and deleting events (only by owner)
-router.get("/:id/edit", requireAuth, requireEventOwner, eventController.showEditForm);
+router.get("/:id/edit", requireAuth, requireEventOwner, eventController.showUpdateEventForm);
 
 // Handle event update
 router.post("/:id/edit", requireAuth, requireEventOwner, eventController.updateEvent);

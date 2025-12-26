@@ -87,7 +87,7 @@ export async function createEvent(req, res) {
 
     req.flash("success", "Evento criado com sucesso.");
     return res.redirect("/events");
-    
+
   } catch (error) {
     console.error("Error creating event:", error);
     req.flash("error", "Ocorreu um erro ao criar o evento. Tenta novamente.");
@@ -256,38 +256,73 @@ export async function leaveEvent(req, res) {
   }
 }
 
-export function showEditForm(req, res) {
-  const event = req.event;
+export async function showUpdateEventForm(req, res) {
+  const event = await req.event.populate("location");
 
-  // Convert date objetct
+  // Converts date to YYYY-MM-DD format for input fields
   const formattedDate = event.date
-  ? event.date.toISOString().split('T')[0]
-  : '';
+    ? event.date.toISOString().split("T")[0]
+    : "";
 
   res.render("events/edit", {
     title: "Editar evento",
     event: {
       ...event.toObject(),
-      date: formattedDate
-    }
+      date: formattedDate,
+    },
   });
 }
 
 export async function updateEvent(req, res) {
-  const { title, description, date, time, location, capacity } = req.body;
+  try {
+    const {
+      title,
+      description,
+      date,
+      time,
+      location,
+      capacity,
+      locationLat,
+      locationLon,
+    } = req.body;
 
-  req.event.title = title;
-  req.event.description = description;
-  req.event.date = new Date(date);
-  req.event.time = time;
-  req.event.location = location;
-  req.event.capacity = capacity;
+    // Atualizar campos simples
+    req.event.title = title;
+    req.event.description = description;
+    req.event.date = new Date(date);
+    req.event.time = time;
+    req.event.capacity = capacity;
 
-  await req.event.save();
+    // Resolver Location (igual ao create)
+    let checkLocation = await Location.findOne({
+      latitude: locationLat,
+      longitude: locationLon,
+    });
 
-  req.flash("success", "Evento atualizado com sucesso.");
-  res.redirect(`/events/${req.event._id}`);
+    if (!checkLocation) {
+      checkLocation = await Location.create({
+        name: location,
+        address: location,
+        latitude: locationLat,
+        longitude: locationLon,
+        source: "OSM",
+      });
+    }
+
+    // Guardar referência correta
+    req.event.location = checkLocation._id;
+
+    await req.event.save();
+
+    req.flash("success", "Evento atualizado com sucesso.");
+    return res.redirect(`/events/${req.event._id}`);
+  } catch (error) {
+    console.error("Error updating event:", error);
+    req.flash("error", "Ocorreu um erro ao atualizar o evento.");
+    return res.redirect(`/events/${req.event._id}/edit`);
+  }
 }
+
 
 export async function deleteEvent(req, res) {
   await req.event.deleteOne();
@@ -305,7 +340,7 @@ export default {
   showEvent,
   participateInEvent,
   leaveEvent,
-  showEditForm,
+  showUpdateEventForm,
   updateEvent,
   deleteEvent
 };
