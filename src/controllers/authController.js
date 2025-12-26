@@ -17,30 +17,24 @@ async function login(req, res) {
   try {
     // Validate required fields
     if (!email || !password) {
-      return res.render("auth/login", {
-        error: "Email and password are required",
-        old: { email }
-      });
+      req.flash("error", "E-mail e password são obrigatórios.");
+      return res.redirect("/auth/login");
     }
 
     // Finds the user by email
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.render("auth/login", {
-        error: "Invalid email or password",
-        old: { email }
-      });
+      req.flash("error", "E-mail ou password inválidos.");
+      return res.redirect("/auth/login");
     }
 
     // Compares the provided password with the stored hash password
     const isMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!isMatch) {
-      return res.render("auth/login", {
-        error: "Invalid email or password",
-        old: { email }
-      });
+      req.flash("error", "E-mail ou password inválidos.");
+      return res.redirect("/auth/login");
     }
 
     // Store user info in session
@@ -51,14 +45,13 @@ async function login(req, res) {
       role: user.role
     }
     
+    req.flash("success", `Bem-vindo de volta, ${user.name}!`);
     return res.redirect("/dashboard");
 
   } catch (error) {
     console.error("Login error:", error);
-    return res.status(500).render("auth/login", {
-      error: "Server error. Try again later.",
-      old: { email }
-    });
+    req.flash("error", "Server error. Try again later.");
+    return res.redirect("/auth/login");
   }
  }
 
@@ -74,8 +67,8 @@ async function register(req, res) {
   try {
     // Validate required fields
     if (!name || !email || !password) {
+      req.flash("error", "Todos os campos são obrigatórios.");
       return res.render("auth/register", {
-        error: "All fields are required",
         old: { name, email }
       });
     }
@@ -83,8 +76,8 @@ async function register(req, res) {
     // Check if the email is already registered
     const emailExists = await User.findOne({ email });
     if (emailExists) {
+      req.flash("error", "O email já está em uso.");
       return res.render("auth/register", {
-        error: "Email already in use",
         old: { name, email }
       });
     }
@@ -100,6 +93,7 @@ async function register(req, res) {
     await newUser.save();
 
     // Redirect to login page after successful registration
+    req.flash("success", "Registo realizado com sucesso. Por favor, inicie sessão.");
     return res.redirect("/auth/login");
 
   } catch (error) {

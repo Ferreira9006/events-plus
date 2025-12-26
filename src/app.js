@@ -4,6 +4,7 @@ import cors from "cors";
 import path from "path";
 import session from "express-session";
 import { fileURLToPath } from "url";
+import flash from 'connect-flash';
 
 import { requireAuth } from './middleware/auth.js';
 import authRoutes from "./routes/authRoutes.js";
@@ -30,11 +31,15 @@ app.use(session({
     httpOnly: true, // Mitigates XSS attacks by preventing client-side JS from accessing the cookie
     maxAge: 1000 * 60 * 60 // 1 hour
   }
-})
-);
+}));
+
+app.use(flash());
 
 // Pass user to all routes if exists
 app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  
   res.locals.user = req.session.user || null;
   next();
 });

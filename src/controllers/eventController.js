@@ -27,11 +27,8 @@ export async function listEvents(req, res) {
 
   } catch (error) {
     console.error("Error listing events:", error);
-    return res.status(500).render("events/index", {
-      title: "Eventos",
-      events: [],
-      error: "Ocorreu um erro ao carregar os eventos.",
-    });
+    req.flash("error", "Ocorreu um erro ao carregar os eventos.");
+    return res.redirect("/");
   }
 }
 
@@ -57,11 +54,8 @@ export async function createEvent(req, res) {
 
     // Basic validation for required fields
     if (!title || !description || !date || !time || !location || !capacity) {
-      return res.status(400).render("events/create", {
-        title: "Criar evento",
-        error: "Todos os campos são obrigatórios.",
-        formData: req.body,
-      });
+      req.flash("error", "Por favor, preenche todos os campos obrigatórios.");
+      return res.redirect("/events/create");
     }
 
     await Event.create({
@@ -77,14 +71,12 @@ export async function createEvent(req, res) {
       status: "OPEN",
     });
 
+    req.flash("success", "Evento criado com sucesso.");
     return res.redirect("/events");
   } catch (error) {
     console.error("Error creating event:", error);
-    return res.status(500).render("events/create", {
-      title: "Criar evento",
-      error: "Ocorreu um erro ao criar o evento. Tenta novamente.",
-      formData: req.body,
-    });
+    req.flash("error", "Ocorreu um erro ao criar o evento. Tenta novamente.");
+    return res.redirect("/events/create");
   }
 }
 
@@ -108,10 +100,11 @@ export async function myEvents(req, res) {
     });
   } catch (error) {
     console.error("Error listing user events:", error);
+
+    req.flash("error", "Ocorreu um erro ao carregar os teus eventos.");
     return res.status(500).render("events/mine", {
       title: "Os meus eventos",
       events: [],
-      error: "Ocorreu um erro ao carregar os teus eventos.",
     });
   }
 }
@@ -128,11 +121,8 @@ export async function showEvent(req, res) {
       .populate("participants", "name email");
 
     if (!event) {
-      return res.status(404).render("events/show", {
-        title: "Evento não encontrado",
-        event: null,
-        error: "Este evento não existe ou foi removido.",
-      });
+      req.flash("error", "Este evento não existe ou foi removido.");
+      return res.redirect("/events");
     }
 
     // Check if the logged-in user is a participant
@@ -153,11 +143,8 @@ export async function showEvent(req, res) {
 
   } catch (error) {
     console.error("Error fetching event details:", error);
-    return res.status(500).render("events/show", {
-      title: "Erro ao carregar evento",
-      event: null,
-      error: "Ocorreu um erro ao carregar este evento.",
-    });
+    req.flash("error", "Ocorreu um erro ao carregar este evento.");
+    return res.redirect("/events");
   }
 }
 
@@ -173,31 +160,22 @@ export async function participateInEvent(req, res) {
     const event = await Event.findById(eventId).populate("participants", "id name email");
 
     if (!event) {
-      return res.status(404).render("events/show", {
-        title: "Evento não encontrado",
-        event: null,
-        error: "Este eevento não existe ou foi removido.",
-      });
+      req.flash("error", "Este evento não existe ou foi removido.");
+      return res.redirect("/events");
     }
 
     // Event must be open for participation
     if (event.status !== "OPEN") {
-      return res.status(400).render("events/show", {
-        title: event.title,
-        event,
-        error: "Este evento não está aberto a novas inscrições.",
-      });
+      req.flash("error", "Este evento não está aberto a novas inscrições.");
+      return res.redirect("/events");
     }
 
     // Check if user is already a participant
     const alreadyParticipant = event.participants.some((p) => p.id === userId);
 
     if (alreadyParticipant) {
-      return res.status(400).render("events/show", {
-        title: event.title,
-        event,
-        error: "Já estás inscrito neste evento.",
-      });
+      req.flash("error", "Já estás inscrito neste evento.");
+      return res.redirect(`/events/${event._id}`);
     }
 
     // Check capacity before adding the user
@@ -205,11 +183,8 @@ export async function participateInEvent(req, res) {
       event.status = "FULL";
       await event.save();
 
-      return res.status(400).render("events/show", {
-        title: event.title,
-        event,
-        error: "Este evento já atingiu a lotação máxima.",
-      });
+      req.flash("error", "Este evento já atingiu a lotação máxima.");
+      return res.redirect(`/events/${event._id}`);
     }
 
     // Add user as participant
@@ -222,14 +197,13 @@ export async function participateInEvent(req, res) {
 
     await event.save();
 
+    req.flash("success", "Inscrição realizada com sucesso.");
     return res.redirect(`/events`);
+
   } catch (error) {
     console.error("Error participating in event:", error);
-    return res.status(500).render("events/show", {
-      title: "Erro ao participar",
-      event: null,
-      error: "Ocorreu um erro ao processar a tua participação.",
-    });
+    req.flash("error", "Ocorreu um erro ao processar a tua participação.");
+    return res.redirect(`/events/${req.params.id}`);
   }
 }
 
@@ -244,6 +218,7 @@ export async function leaveEvent(req, res) {
     const event = await Event.findById(eventId);
 
     if (!event) {
+      req.flash("error", "Este evento não existe ou foi removido.");
       return res.redirect("/events");
     }
 
@@ -257,9 +232,11 @@ export async function leaveEvent(req, res) {
 
     await event.save();
 
+    req.flash("success", "Inscrição removida com sucesso.");
     res.redirect(`/events`);
   } catch (error) {
     console.log("Error leaving event:", error);
+    req.flash("error", "Ocorreu um erro ao remover a tua inscrição.");
     res.redirect(`/events`);
   }
 }
@@ -293,11 +270,13 @@ export async function updateEvent(req, res) {
 
   await req.event.save();
 
+  req.flash("success", "Evento atualizado com sucesso.");
   res.redirect(`/events/${req.event._id}`);
 }
 
 export async function deleteEvent(req, res) {
   await req.event.deleteOne();
+  req.flash("success", "Evento eliminado com sucesso.");
   res.redirect("/events");
 }
 

@@ -12,6 +12,18 @@ html(lang="pt")
       include ../components/navbar.pug
 
     main(class="flex-1")
+      section(class="max-w-6xl mx-auto px-4 pt-10 space-y-8")
+        if success && success.length
+          div(class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800")
+            each msg in success
+              p.text-sm.font-semibold= msg
+
+        if error && error.length
+          div(class="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-800")
+            each msg in error
+              p.text-sm.font-semibold= msg
+
+
       block content
 
     include ../components/footer.pug
