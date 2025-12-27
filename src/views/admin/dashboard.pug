@@ -11,32 +11,32 @@ block content
   // KPI ROW
   div(class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10")
 
-    div(class="card bg-base-100 shadow-sm border")
+    div(class="card bg-base-100 shadow-sm")
       div(class="card-body py-5")
         p(class="text-sm text-slate-500") Utilizadores
         h2(class="text-2xl font-bold") #{stats.users}
         span(class="badge badge-success badge-sm mt-2") Ativos
 
-    div(class="card bg-base-100 shadow-sm border")
+    div(class="card bg-base-100 shadow-sm")
       div(class="card-body py-5")
         p(class="text-sm text-slate-500") Eventos
         h2(class="text-2xl font-bold") #{stats.events}
         span(class="badge badge-info badge-sm mt-2") Registados
 
-    div(class="card bg-base-100 shadow-sm border")
+    div(class="card bg-base-100 shadow-sm")
       div(class="card-body py-5")
         p(class="text-sm text-slate-500") Localizações
         h2(class="text-2xl font-bold") #{stats.locations}
         span(class="badge badge-warning badge-sm mt-2") OSM & MANUAL
 
-    div(class="card bg-base-100 shadow-sm border")
+    div(class="card bg-base-100 shadow-sm")
       div(class="card-body py-5")
         p(class="text-sm text-slate-500") Sistema
         h2(class="text-2xl font-bold") Online
         span(class="badge badge-outline badge-sm mt-2") Admin only
 
   // SYSTEM STATUS
-  div(class="card bg-base-100 shadow-sm border mb-10")
+  div(class="card bg-base-100 shadow-sm mb-10")
     div(class="card-body")
       h2(class="card-title text-base mb-2") Estado do sistema
 
@@ -61,7 +61,7 @@ block content
 
       a(
         href="/admin/users"
-        class="group card bg-base-100 shadow-sm border hover:shadow-md transition"
+        class="group card bg-base-100 shadow-sm hover:shadow-md transition"
       )
         div(class="card-body")
           h3(class="font-semibold") Gerir utilizadores
@@ -72,7 +72,7 @@ block content
 
       a(
         href="/admin/locations"
-        class="group card bg-base-100 shadow-sm border hover:shadow-md transition"
+        class="group card bg-base-100 shadow-sm hover:shadow-md transition"
       )
         div(class="card-body")
           h3(class="font-semibold") Gerir localizações
@@ -81,7 +81,7 @@ block content
           span(class="mt-3 inline-block text-secondary text-sm font-semibold group-hover:underline")
             | Aceder →
 
-      div(class="card bg-base-100 shadow-sm border opacity-60")
+      div(class="card bg-base-100 shadow-sm opacity-60")
         div(class="card-body")
           h3(class="font-semibold") Configurações
           p(class="text-sm text-slate-500")
