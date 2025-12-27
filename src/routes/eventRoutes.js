@@ -1,4 +1,4 @@
-// src/routes/event.routes.js
+// src/routes/eventRoutes.js
 import { Router } from "express";
 import eventController from "../controllers/eventController.js";
 import { requireAuth } from "../middleware/auth.js";
