@@ -1,0 +1,74 @@
+extends ../../layouts/admin/main
+
+block content
+
+  // HEADER: Title + Actions
+  div(class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6")
+
+    div
+      h1(class="text-3xl font-bold tracking-tight")
+        | Gestão de Localizações
+      p(class="text-sm text-base-content/60")
+        | A visualizar a localização com o ID:
+        span(class="font-mono ml-1") #{location._id}
+
+    // ACTION BUTTONS
+    div(class="flex flex-wrap items-center gap-2")
+
+      a(
+        href="/admin/locations"
+        class="btn btn-sm btn-outline"
+      )
+        | Voltar à listagem
+
+      a(
+        href=`/admin/locations/${location._id}/edit`
+        class="btn btn-sm btn-primary"
+      )
+        | Alterar
+
+      form(
+        action=`/admin/locations/${location._id}/delete`
+        method="POST"
+        onsubmit="return confirm('Tens a certeza que queres eliminar esta localização?')"
+      )
+        button(
+          type="submit"
+          class="btn btn-sm btn-error"
+        )
+          | Eliminar
+
+  // CONTENT CARD
+  div(class="card bg-base-100 shadow-sm border")
+    div(class="card-body")
+
+      h2(class="card-title mb-4")
+        | Detalhes da Localização
+
+      dl(class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm")
+
+        div
+          dt(class="text-base-content/60") Morada
+          dd(class="font-medium") #{location.address}
+
+        div
+          dt(class="text-base-content/60") Latitude
+          dd(class="font-medium") #{location.latitude}
+
+        div
+          dt(class="text-base-content/60") Longitude
+          dd(class="font-medium") #{location.longitude}
+
+        div
+          dt(class="text-base-content/60") Fonte
+          dd(class="font-medium") #{location.source}
+
+        div
+          dt(class="text-base-content/60") Criado em
+          dd(class="font-medium")
+            | #{location.createdAt.toDateString()}
+
+        div
+          dt(class="text-base-content/60") Atualizado em
+          dd(class="font-medium")
+            | #{location.updatedAt.toDateString()}

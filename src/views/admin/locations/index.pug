@@ -1,0 +1,30 @@
+extends ../../layouts/admin/main
+
+block content
+  h1(class="text-3xl font-bold tracking-tight mb-1")
+    | Gestão de Localizações
+
+  p(class="text-slate-500 mb-8 max-w-2xl")
+    | Todas as localizações do sistema.
+
+  div(class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100")
+    table(class="table")
+      // head
+      thead
+        tr
+          th Address
+          th Latitude
+          th Longitude
+          th Source
+          th Created At
+          th Updated At
+      tbody
+        each location in locations
+          tr
+            td 
+              a(class="link" href=`/admin/locations/${location._id}`) #{location.address}
+            td #{location.latitude}
+            td #{location.longitude}
+            td #{location.source}
+            td #{location.createdAt.toDateString()}
+            td #{location.updatedAt.toDateString()}

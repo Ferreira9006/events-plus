@@ -10,6 +10,7 @@ import { requireAuth } from './middleware/auth.js';
 import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import adminLocationRoutes from "./routes/adminLocationRoutes.js";
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use("/auth", authRoutes);
 app.use("/events", eventRoutes);
 
 app.use("/admin", adminRoutes);
+app.use("/admin/locations", adminLocationRoutes);
 
 
 export default app;
