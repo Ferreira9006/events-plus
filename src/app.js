@@ -54,8 +54,8 @@ app.get("/", (req, res) => {
   res.render("welcome", { title: "Welcome" });
 });
 
-app.get("/dashboard", requireAuth, (req, res) => {
-  res.render("dashboard", { title: "Dashboard", user: req.session.user });
+app.get("/auth/dashboard", requireAuth, (req, res) => {
+  res.render("auth/dashboard", { title: "Dashboard", user: req.session.user });
 });
 
 app.use("/auth", authRoutes);

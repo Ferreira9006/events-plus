@@ -62,7 +62,7 @@ async function login(req, res) {
     };
 
     req.flash("success", `Bem-vindo de volta, ${user.name}!`);
-    return res.redirect("/dashboard");
+    return res.redirect("/auth/dashboard");
 
   } catch (error) {
     console.error("Login error:", error);
