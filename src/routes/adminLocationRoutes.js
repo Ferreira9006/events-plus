@@ -10,5 +10,7 @@ const router = Router();
 router.get("/", requireAuth, requireAdmin, adminLocationsController.index);
 
 router.get("/:id", requireAuth, requireAdmin, adminLocationsController.show);
+router.get("/:id/edit", requireAuth, requireAdmin, adminLocationsController.showEditForm);
+router.post("/:id", requireAuth, requireAdmin, adminLocationsController.update);
 
 export default router;

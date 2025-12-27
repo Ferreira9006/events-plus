@@ -1,1 +1,94 @@
-3
+extends ../../layouts/admin/main
+
+block content
+
+  // HEADER
+  div(class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6")
+
+    div
+      h1(class="text-3xl font-bold tracking-tight")
+        | Gestão de Localizações
+      p(class="text-sm text-base-content/60")
+        | A editar a localização com o ID:
+        span(class="font-mono ml-1") #{location._id}
+
+    div(class="flex flex-wrap items-center gap-2")
+      a(
+        href="/admin/locations"
+        class="btn btn-sm btn-outline"
+      )
+        | Voltar à listagem
+
+  // FORM
+  form(
+    method="POST"
+    action=`/admin/locations/${location._id}`
+  )
+    div(class="card bg-base-100 shadow-md border border-base-200")
+      div(class="card-body gap-6")
+
+        h2(class="text-lg font-semibold")
+          | Detalhes da Localização
+
+        // MORADA
+        label(class="form-control w-full")
+          div(class="label")
+            span(class="label-text font-medium") Morada
+          input(
+            type="text"
+            name="address"
+            value=location.address
+            class="input input-bordered w-full"
+            required
+          )
+
+        // LATITUDE
+        label(class="form-control w-full")
+          div(class="label")
+            span(class="label-text text-base-content/70") Latitude
+          input(
+            type="text"
+            name="latitude"
+            value=location.latitude
+            class="input input-bordered w-full"
+            required
+          )
+
+        // LONGITUDE
+        label(class="form-control w-full")
+          div(class="label")
+            span(class="label-text text-base-content/70") Longitude
+          input(
+            type="text"
+            name="longitude"
+            value=location.longitude
+            class="input input-bordered w-full"
+            required
+          )
+
+        // FONTE
+        label(class="form-control w-full")
+          div(class="label")
+            span(class="label-text text-base-content/70") Fonte
+          select(
+            name="source"
+            class="select select-bordered w-full"
+            required
+          )
+            option(value="OSM" selected=location.source === "OSM") Open Street Map
+            option(value="MANUAL" selected=location.source === "MANUAL") Manual
+
+        // ACTIONS
+        div(class="flex justify-end gap-3 pt-6 border-t border-base-200")
+
+          a(
+            href="/admin/locations"
+            class="btn btn-ghost"
+          )
+            | Cancelar
+
+          button(
+            type="submit"
+            class="btn btn-primary"
+          )
+            | Guardar alterações
