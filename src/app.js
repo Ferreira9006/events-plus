@@ -63,6 +63,7 @@ app.use("/auth", authRoutes);
 app.use("/events", eventRoutes);
 
 app.use("/admin", adminRoutes);
+
 app.use("/admin/locations", adminLocationRoutes);
 
 
