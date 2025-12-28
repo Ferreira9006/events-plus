@@ -1,1 +1,72 @@
-3
+extends ../../layouts/admin/main
+
+block content
+
+  // HEADER
+  div(class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6")
+
+    div
+      h1(class="text-3xl font-bold tracking-tight") Editar Utilizador
+      p(class="text-sm text-base-content/60")
+        | ID:
+        span(class="font-mono ml-1") #{user._id}
+
+    a(
+      href="/admin/users"
+      class="btn btn-sm btn-outline"
+    ) Voltar
+
+  // FORM
+  form(
+    method="POST"
+    action=`/admin/users/${user._id}`
+  )
+    div(class="card bg-base-100 shadow-md border border-base-200")
+      div(class="card-body gap-6")
+
+        // NAME
+        label(class="form-control w-full")
+          div(class="label")
+            span(class="label-text font-medium") Nome
+          input(
+            type="text"
+            name="name"
+            value=user.name
+            required
+            class="input input-bordered w-full"
+          )
+
+        // EMAIL
+        label(class="form-control w-full")
+          div(class="label")
+            span(class="label-text text-base-content/70") Email
+          input(
+            type="email"
+            name="email"
+            value=user.email
+            required
+            class="input input-bordered w-full"
+          )
+
+        // ROLE
+        label(class="form-control w-full")
+          div(class="label")
+            span(class="label-text text-base-content/70") Role
+          select(
+            name="role"
+            class="select select-bordered w-full"
+          )
+            option(value="USER" selected=user.role === "USER") USER
+            option(value="ADMIN" selected=user.role === "ADMIN") ADMIN
+
+        // ACTIONS
+        div(class="flex justify-end gap-3 pt-6 border-t border-base-200")
+          a(
+            href="/admin/users"
+            class="btn btn-ghost"
+          ) Cancelar
+
+          button(
+            type="submit"
+            class="btn btn-primary"
+          ) Guardar alterações

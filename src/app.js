@@ -11,6 +11,7 @@ import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import adminLocationRoutes from "./routes/adminLocationRoutes.js";
+import adminUserRoutes from "./routes/adminUsersRoutes.js";
 
 dotenv.config();
 
@@ -65,6 +66,8 @@ app.use("/events", eventRoutes);
 app.use("/admin", adminRoutes);
 
 app.use("/admin/locations", adminLocationRoutes);
+
+app.use("/admin/users", adminUserRoutes);
 
 
 export default app;

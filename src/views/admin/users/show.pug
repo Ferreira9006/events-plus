@@ -1,0 +1,72 @@
+extends ../../layouts/admin/main
+
+block content
+
+  // HEADER
+  div(class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6")
+
+    div
+      h1(class="text-3xl font-bold tracking-tight") Detalhe do Utilizador
+      p(class="text-sm text-base-content/60")
+        | ID:
+        span(class="font-mono ml-1") #{user._id}
+
+    div(class="flex gap-2")
+      a(
+        href="/admin/users"
+        class="btn btn-sm btn-outline"
+      ) Voltar
+      a(
+        href=`/admin/users/${user._id}/edit`
+        class="btn btn-sm btn-primary"
+      ) Editar
+
+  // CARD
+  div(class="card bg-base-100 shadow-md border border-base-200")
+    div(class="card-body gap-6")
+
+      // NAME
+      label(class="form-control w-full")
+        div(class="label")
+          span(class="label-text font-medium") Nome
+        input(
+          type="text"
+          value=user.name
+          readonly
+          class="input input-bordered input-disabled w-full"
+        )
+
+      // EMAIL
+      label(class="form-control w-full")
+        div(class="label")
+          span(class="label-text text-base-content/70") Email
+        input(
+          type="text"
+          value=user.email
+          readonly
+          class="input input-bordered input-disabled w-full"
+        )
+
+      // ROLE
+      label(class="form-control w-full")
+        div(class="label")
+          span(class="label-text text-base-content/70") Role
+        input(
+          type="text"
+          value=user.role
+          readonly
+          class="input input-bordered input-disabled w-full"
+        )
+
+      // ACTIONS
+      div(class="flex justify-end pt-6 border-t border-base-200")
+        form(
+          method="POST"
+          action=`/admin/users/${user._id}/delete`
+          onsubmit="return confirm('Tens a certeza que queres eliminar este utilizador?')"
+        )
+          button(
+            type="submit"
+            class="btn btn-error btn-outline"
+          )
+            | Eliminar utilizador
