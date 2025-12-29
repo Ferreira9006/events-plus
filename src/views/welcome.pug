@@ -1,84 +1,142 @@
 extends layouts/landing
 
 block content
-  section(class="max-w-6xl mx-auto px-4 py-10 md:py-16")
-    // HERO SECTION
-    div(class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center")
-      // Left column: Text content
+
+  // =========================
+  // HERO
+  // =========================
+  section(class="max-w-6xl mx-auto px-4 py-14 md:py-20")
+    div(class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center")
+
+      // LEFT
       div
         p(class="text-xs font-semibold tracking-widest text-blue-600 uppercase mb-3")
           | Plataforma de eventos comunitários
 
-        h1(class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-4")
+        h1(class="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-4")
           | Cria e participa em 
-          span(class="text-blue-600")  eventos
+          span(class="text-blue-600") eventos
           |  na tua comunidade.
 
         p(class="text-slate-600 mb-6 max-w-md")
-          | Organiza meetups, workshops, torneios, atividades de bairro e muito mais. 
+          | Organiza meetups, workshops, torneios, atividades de bairro e muito mais.
           | Gere inscrições, acompanha presenças e recompensa a participação com pontos.
 
+        div(class="flex gap-4 text-xs text-slate-500 mb-6")
+          span +120 eventos
+          span +2.300 participantes
+          span +35 comunidades
+
         div(class="flex flex-col sm:flex-row gap-3")
-          if user 
-            a(href="/events/create"
-                class="inline-flex justify-center items-center px-5 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition")
-                | Criar novo evento
-            a(href="/auth/dashboard"
-              class="inline-flex justify-center items-center px-5 py-3 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition")
-              | Ir para o dashboard
+          if user
+            a(
+              href="/events/create"
+              class="inline-flex justify-center items-center px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+            ) Criar novo evento
+            a(
+              href="/auth/dashboard"
+              class="inline-flex justify-center items-center px-6 py-3 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition"
+            ) Ir para o dashboard
           else
-            a(href="/auth/register"
-              class="inline-flex justify-center items-center px-5 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition")
-              | Começar agora
-            a(href="/auth/login"
-              class="inline-flex justify-center items-center px-5 py-3 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition")
-              | Já tenho conta
+            a(
+              href="/auth/register"
+              class="inline-flex justify-center items-center px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+            ) Começar agora
+            a(
+              href="/auth/login"
+              class="inline-flex justify-center items-center px-6 py-3 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition"
+            ) Já tenho conta
 
-      // Right column: Events “preview”
-      div(class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100")
-        h2(class="text-sm font-semibold text-slate-800 mb-3 flex items-center justify-between")
+      // RIGHT — Upcoming events
+      div(class="bg-white rounded-2xl shadow-xl p-6 border border-slate-100")
+        h2(class="text-sm font-semibold text-slate-800 mb-4 flex justify-between")
           span Próximos eventos
+          a(href="/events" class="text-xs text-blue-600 hover:underline") Ver todos →
 
-        // Card 1
-        div(class="flex items-start gap-3 py-3 border-b border-slate-100")
-          div(class="mt-1 h-9 w-9 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700")
-            span 24
+        // EVENT 1
+        div(class="flex items-start gap-4 py-4 border-b")
+          div(class="mt-1 h-10 w-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold")
+            | 24
           div
             p(class="text-sm font-semibold text-slate-800") Meetup de Devs JS
-            p(class="text-[11px] text-slate-500") 24 Mar · 18:00 · Espaço Cowork X
-            p(class="text-[11px] text-slate-500 mt-1") 32 participantes confirmados
+            p(class="text-xs text-slate-500") 24 Mar · 18:00 · Cowork X
+            p(class="text-xs text-slate-400 mt-1") 32 participantes confirmados
 
-        // Card 2
-        div(class="flex items-start gap-3 py-3 border-b border-slate-100")
-          div(class="mt-1 h-9 w-9 rounded-lg bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700")
-            span 02
+        // EVENT 2
+        div(class="flex items-start gap-4 py-4 border-b")
+          div(class="mt-1 h-10 w-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold")
+            | 02
           div
-            p(class="text-sm font-semibold text-slate-800") Workshop: Introdução a React
-            p(class="text-[11px] text-slate-500") 2 Abr · 14:30 · Biblioteca Municipal
-            p(class="text-[11px] text-slate-500 mt-1") 18 de 25 vagas ocupadas
+            p(class="text-sm font-semibold text-slate-800") Workshop React
+            p(class="text-xs text-slate-500") 2 Abr · 14:30 · Biblioteca Municipal
+            p(class="text-xs text-slate-400 mt-1") 18 de 25 vagas ocupadas
 
-        // Card 3
-        div(class="flex items-start gap-3 py-3")
-          div(class="mt-1 h-9 w-9 rounded-lg bg-purple-100 flex items-center justify-center text-xs font-bold text-purple-700")
-            span 10
+        // EVENT 3
+        div(class="flex items-start gap-4 py-4")
+          div(class="mt-1 h-10 w-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold")
+            | 10
           div
             p(class="text-sm font-semibold text-slate-800") Torneio FIFA Solidário
-            p(class="text-[11px] text-slate-500") 10 Abr · 15:00 · Associação Juvenil Y
-            p(class="text-[11px] text-slate-500 mt-1") Angariação de fundos para projetos locais
+            p(class="text-xs text-slate-500") 10 Abr · 15:00 · Associação Y
+            p(class="text-xs text-slate-400 mt-1") Angariação de fundos
 
-    // Extra section
-    section(class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm")
-      div(class="bg-white rounded-xl shadow-sm p-5")
-        h3(class="font-semibold text-slate-800 mb-1") Para organizadores
-        p(class="text-slate-600 text-xs")
-          | Centraliza toda a gestão dos teus eventos: inscrições, presenças e comunicação com os participantes.
+  // =========================
+  // TARGET AUDIENCE
+  // =========================
+  section(class="mt-1 max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6")
+    div(class="bg-white rounded-xl shadow-sm p-6")
+      h3(class="font-semibold text-slate-800 mb-2") Para organizadores
+      p(class="text-slate-600 text-sm")
+        | Centraliza toda a gestão dos teus eventos.
 
-      div(class="bg-white rounded-xl shadow-sm p-5")
-        h3(class="font-semibold text-slate-800 mb-1") Para participantes
-        p(class="text-slate-600 text-xs")
-          | Descobre eventos interessantes perto de ti e acompanha o histórico das tuas participações.
+    div(class="bg-white rounded-xl shadow-sm p-6")
+      h3(class="font-semibold text-slate-800 mb-2") Para participantes
+      p(class="text-slate-600 text-sm")
+        | Descobre eventos perto de ti e acompanha participações.
 
-      div(class="bg-white rounded-xl shadow-sm p-5")
-        h3(class="font-semibold text-slate-800 mb-1") Para comunidades
-        p(class="text-slate-600 text-xs")
-          | Incentiva a participação cívica, o voluntariado e a criação de redes locais ativas.
+    div(class="bg-white rounded-xl shadow-sm p-6")
+      h3(class="font-semibold text-slate-800 mb-2") Para comunidades
+      p(class="text-slate-600 text-sm")
+        | Cria redes locais ativas e participativas.
+
+  // =========================
+  // TESTIMONIALS
+  // =========================
+  section(class="mt-20 bg-slate-50 py-20 text-blue-600")
+    .max-w-6xl.mx-auto.px-4
+      h2(class="text-2xl font-bold text-center mb-10") O que dizem os utilizadores
+
+      div(class="grid grid-cols-1 md:grid-cols-3 gap-6")
+        div(class="bg-white rounded-xl shadow-sm p-6")
+          p(class="text-slate-600 mb-4")
+            | “Finalmente conseguimos organizar eventos sem confusão.”
+          p(class="font-semibold") Ana Ribeiro
+          p(class="text-xs text-slate-500") Organizadora · Lisboa
+
+        div(class="bg-white rounded-xl shadow-sm p-6")
+          p(class="text-slate-600 mb-4")
+            | “Descobri workshops que nunca saberia que existiam.”
+          p(class="font-semibold") Miguel Santos
+          p(class="text-xs text-slate-500") Participante · Porto
+
+        div(class="bg-white rounded-xl shadow-sm p-6")
+          p(class="text-slate-600 mb-4")
+            | “A Events+ aumentou a participação da comunidade.”
+          p(class="font-semibold") Associação Jovem Ativa
+          p(class="text-xs text-slate-500") Braga
+
+  // =========================
+  // FINAL CTA
+  // =========================
+  section(class="mt-24 bg-blue-600 text-white py-24 text-center")
+    h2(class="text-3xl font-bold mb-4")
+      | A tua comunidade começa aqui
+
+    p(class="text-blue-100 mb-8 max-w-xl mx-auto")
+      | Cria eventos, envolve pessoas e constrói ligações reais.
+
+    a(
+      href=user ? "/events/create" : "/auth/register"
+      class="inline-flex px-8 py-4 rounded-lg bg-white text-blue-600 font-semibold hover:bg-blue-50 transition"
+    )
+      | Começar agora
