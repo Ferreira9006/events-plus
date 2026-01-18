@@ -165,7 +165,7 @@ const events = [
   {
     title: "Meetup Devs JS",
     description: "Encontro informal para developers JavaScript.",
-    date: new Date("2025-03-24"),
+    date: new Date("2026-03-24"),
     time: "18:00",
     capacity: 40,
     status: "OPEN",
@@ -176,10 +176,10 @@ const events = [
   {
     title: "Workshop React",
     description: "Introdução prática ao React.",
-    date: new Date("2025-04-02"),
+    date: new Date("2026-04-02"),
     time: "14:30",
     capacity: 25,
-    status: "FULL",
+    status: "OPEN",
     organizer: users[2]._id,
     participants: [users[4]._id, users[5]._id, users[6]._id],
     location: locations[1]._id,
@@ -187,7 +187,7 @@ const events = [
   {
     title: "Torneio FIFA Solidário",
     description: "Torneio solidário com angariação de fundos.",
-    date: new Date("2025-04-10"),
+    date: new Date("2026-04-10"),
     time: "15:00",
     capacity: 16,
     status: "OPEN",
