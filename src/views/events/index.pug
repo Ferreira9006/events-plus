@@ -97,7 +97,7 @@ block content
               - let participantCount = (event.participants && event.participants.length) ? event.participants.length : 0;
 
               if typeof event.capacity !== 'undefined'
-                span(class="inline-flex items-center gap-1")
+                span(class="inline-flex items-center gap-1 text-slate-500")
                   | Lugares:
                   span(class="font-semibold text-slate-700")
                     | #{participantCount} / #{event.capacity}
